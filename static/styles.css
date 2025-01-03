@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+button {
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #004225; /* British Racing Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin: 20px auto;
+    display: block;
+}
+button:hover {
+    background-color: #003311;  /* Darker shade of British Racing Green */
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #004225; /* British Racing Green */
+    color: white;
+}
+
+td {
+    background-color: #f2f2f2;
+}
