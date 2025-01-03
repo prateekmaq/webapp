@@ -3,23 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Data</title>
+    <title>User Data App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            width: 200px;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #004225; /* British Racing Green */
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #003311;  /* Darker shade of British Racing Green */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #004225; /* British Racing Green */
+            color: white;
+        }
+
+        td {
+            background-color: #f2f2f2;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .pagination span {
+            margin: 0 10px;
+        }
+
+        .env-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .env-link a {
+            color: #004225; /* British Racing Green */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .env-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Random User Data</h1>
-    <table border="1">
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Country</th>
-        </tr>
-        {% for user in users %}
-        <tr>
-            <td>{{ user['name']['first'] }} {{ user['name']['last'] }}</td>
-            <td>{{ user['email'] }}</td>
-            <td>{{ user['location']['country'] }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="container">
+        <h1>User Data</h1>
+        <div class="controls">
+            <input type="text" id="search" placeholder="Search by country">
+            <button id="refresh">Refresh Data</button>
+        </div>
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Country</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="pagination">
+            <button id="prevPage">Previous</button>
+            <span id="currentPage">1</span>
+            <button id="nextPage">Next</button>
+        </div>
+        <div class="env-link">
+            <a href="/env">View Environment Variables</a>
+        </div>
+    </div>
+    <script>
+        let currentPage = 1;
+        let userData = [];
+        let originalData = [];
+        const usersPerPage = 10;
+
+        function fetchUsers() {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(data => {
+                    userData = data.map((user, index) => ({ ...user, serial: index + 1 }));
+                    originalData = [...userData];  // Save original data with serial numbers
+                    displayUsers();
+                });
+        }
+
+        function displayUsers() {
+            const tableBody = document.querySelector('#userTable tbody');
+            tableBody.innerHTML = '';
+            const start = (currentPage - 1) * usersPerPage;
+            const end = start + usersPerPage;
+            const paginatedUsers = userData.slice(start, end);
+            paginatedUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.serial}</td>
+                    <td>${user.name.first} ${user.name.last}</td>
+                    <td>${user.email}</td>
+                    <td>${user.location.country}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+            updatePaginationButtons();
+        }
+
+        function searchUsers() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            if (searchTerm === '') {
+                userData = [...originalData];  // Reset to original data
+            } else {
+                userData = originalData.filter(user =>
+                    user.location.country.toLowerCase().includes(searchTerm)
+                );
+            }
+            currentPage = 1;
+            displayUsers();
+        }
+
+        function updatePaginationButtons() {
+            const prevButton = document.getElementById('prevPage');
+            const nextButton = document.getElementById('nextPage');
+            const currentPageSpan = document.getElementById('currentPage');
+
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage === Math.ceil(userData.length / usersPerPage);
+            currentPageSpan.textContent = currentPage;
+        }
+
+        document.getElementById('refresh').addEventListener('click', () => {
+            currentPage = 1;
+            fetchUsers();
+        });
+
+        document.getElementById('search').addEventListener('input', searchUsers);
+
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayUsers();
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            if (currentPage < Math.ceil(userData.length / usersPerPage)) {
+                currentPage++;
+                displayUsers();
+            }
+        });
+
+        fetchUsers();
+    </script>
 </body>
 </html>
