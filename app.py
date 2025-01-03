@@ -26,7 +26,7 @@ def display_env():
         "FLASK_APP_NAME": "dummy_flask_app_name",
         "FLASK_ENV": "dummy_flask_env",
         "FLASK_DEBUG": "dummy_flask_debug",
-        "API_URL": "https://dummyapi.com",
+        "API_URL": "https://randomuser.me/api",
         "SECRET_KEY": "dummy_secret_key"
     }
     return render_template('env.html', env_variables=env_variables)
