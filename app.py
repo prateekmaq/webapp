@@ -1,13 +1,9 @@
 from flask import Flask, render_template, jsonify
 import os
 import requests
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = "dummy_secret_key"
 api_url = "https://randomuser.me/api"
 
 def fetch_users(num_users=30):
@@ -27,11 +23,11 @@ def get_users():
 @app.route('/env')
 def display_env():
     env_variables = {
-        "FLASK_APP_NAME": os.getenv('FLASK_APP_NAME'),
-        "FLASK_ENV": os.getenv('FLASK_ENV'),
-        "FLASK_DEBUG": os.getenv('FLASK_DEBUG'),
-        "API_URL": os.getenv('API_URL'),
-        "SECRET_KEY": os.getenv('SECRET_KEY')
+        "FLASK_APP_NAME": "dummy_flask_app_name",
+        "FLASK_ENV": "dummy_flask_env",
+        "FLASK_DEBUG": "dummy_flask_debug",
+        "API_URL": "https://dummyapi.com",
+        "SECRET_KEY": "dummy_secret_key"
     }
     return render_template('env.html', env_variables=env_variables)
 
