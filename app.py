@@ -8,7 +8,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-api_url = os.getenv('API_URL')
+api_url = "https://randomuser.me/api"
 
 def fetch_users(num_users=30):
     url = f"{api_url}?results={num_users}"
